@@ -413,8 +413,27 @@ var app = express.createServer(
 //     }
 // });
 
+app.get('/send', function(req, res) {
+    res.redirect('/');
+});
 
-//The 404 Route (ALWAYS Keep this as the last route)
+app.post('/share', function(req, res) {
+    res.render('share.ejs', 
+	       {
+		   
+	       });
+});
+
+app.get('/:id', function(req, res) {
+    var id = req.params.id;
+    res.render('receive.ejs', 
+	       {
+		   title: "Message received",
+		   id: id
+	       });
+});
+
+
 app.get('/', function(req, res){
     res.render('index.ejs', 
 	       {
