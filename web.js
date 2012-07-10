@@ -1,12 +1,10 @@
 
 var express = require('express')
   , ejs = require('ejs')
-  , mongoose = require('mongoose')
+  , mongo = require('mongodb')
   ;
 
-var Schema = mongoose.Schema
-  , ObjectId = Schema.ObjectId
-  ;
+var ObjectId = mongo.ObjectId;
 
 
 var app = express.createServer(
