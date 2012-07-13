@@ -12,33 +12,76 @@
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-    	<div class="container"><a href="#" class="brand">speak.js</a></div>
+    	<div class="container"><a href="#" class="brand">VoiceMan</a></div>
       </div>
     </div>
 
     <div class="container">
-      <h1>Demo</h1>
-      <form id="demo-form" class="form-horizontal">
-	<fieldset>
-	  <div class="control-group"><label for="text" class="control-label">Text:</label>
-	    <div class="controls"><textarea id="textarea" type="text" rows="5" class="input-xlarge">Text-to-Speech is awesome. Feel free to play around!</textarea></div>
-	  </div>
-	  <div class="control-group">
-	    <label for="amplitude" class="control-label">Amplitude:</label><div class="controls"><input id="amplitude" type="text" value="100" class="input-small"></div>
-	    <label for="pitch" class="control-label">Pitch:</label><div class="controls"><input id="pitch" type="text" value="50" class="input-small"></div>
-	    <label for="speed" class="control-label">Speed:</label><div class="controls"><input id="speed" type="text" value="175" class="input-small"></div>
-	    <label for="wordgap" class="control-label">Word gap:</label><div class="controls"><input id="wordgap" type="text" value="0" class="input-small"></div>
-	  </div>
-	  <div class="form-actions">
-	    <button id="play-btn" class="btn btn-primary">Play</button>
-	    <button id="pause-btn" class="btn">Pause</button>
-	    <button id="resume-btn" class="btn">Resume</button>
-	  </div>
-	</fieldset>
+      <!-- <form id="demo-form" class="form-horizontal" action="/share" method="post"> -->
+      <!-- 	<fieldset> -->
+      <!-- 	  <div class="control-group"><label for="text" class="control-label">Text:</label> -->
+      <!-- 	    <div class="controls"><textarea id="textarea" type="text" rows="5" class="input-xlarge" name="text">Text-to-Speech is awesome. Feel free to play around!</textarea></div> -->
+      <!-- 	  </div> -->
+      <!-- 	  <div class="control-group"> -->
+      <!-- 	    <label for="amplitude" class="control-label">Amplitude:</label><div class="controls"><input id="amplitude" type="text" value="100" class="input-small"></div> -->
+      <!-- 	    <label for="pitch" class="control-label">Pitch:</label><div class="controls"><input id="pitch" type="text" value="50" class="input-small"></div> -->
+      <!-- 	    <label for="speed" class="control-label">Speed:</label><div class="controls"><input id="speed" type="text" value="175" class="input-small"></div> -->
+      <!-- 	    <label for="wordgap" class="control-label">Word gap:</label><div class="controls"><input id="wordgap" type="text" value="0" class="input-small"></div> -->
+      <!-- 	  </div> -->
+      <!-- 	  <div class="form-actions"> -->
+      <!-- 	    <button id="play-btn" class="btn btn-primary">Play</button> -->
+      <!-- 	    <button id="pause-btn" class="btn">Pause</button> -->
+      <!-- 	    <button id="resume-btn" class="btn">Resume</button> -->
+      <!-- 	    <button id="resume-btn" class="btn" type=submit>Send</button> -->
+      <!-- 	  </div> -->
+      <!-- 	</fieldset> -->
+      <!-- </form> -->
+
+      <form id="demo-form" class="form-horizontal" action="/share" method="post">
+      	<fieldset>
+         <table>
+          <thead><h1>Send a message with VoiceMan</h1></thead>
+          <tr>
+          <td style="vertical-align: top"><span class="badge badge-info">Step 1</span></td>
+          <td>
+      	  <div class="control-group"><label for="text" class="control-label">Text:</label>
+      	    <div class="controls"><textarea id="textarea" type="text" rows="5" class="input-xlarge" name="text" placeholder="Type your message"></textarea></div>
+      	  </div>
+          </td>
+          </tr>
+          <tr>
+          <td style="vertical-align: top"><span class="badge badge-info">Step 2</span></td>
+          <td>
+      	  <div class="control-group">
+      	    <label for="amplitude" class="control-label">Amplitude:</label><div class="controls"><input id="amplitude" type="text" value="100" class="input-small" name="amplitude"></div>
+      	    <label for="pitch" class="control-label">Pitch:</label><div class="controls"><input id="pitch" type="text" value="50" class="input-small" name="pitch"></div>
+      	    <label for="speed" class="control-label">Speed:</label><div class="controls"><input id="speed" type="text" value="175" class="input-small" name="speed"></div>
+      	    <label for="wordgap" class="control-label">Word gap:</label><div class="controls"><input id="wordgap" type="text" value="0" class="input-small" name="wordgap"></div>
+      	  </div>
+          </td>
+          </tr>
+          <tr>
+          <td style="vertical-align: top"><span class="badge badge-info">Step 3</span></td>
+          <td>
+      	  <div class="form-actions">
+      	    <button id="play-btn" class="btn btn-primary">Play</button>
+      	    <button id="send-btn" class="btn btn-success" type=submit>Send</button>
+      	  </div>
+          </td>
+          </tr>
+	  <tr>
+	  <td>
+          </td>
+          <td>
+	    <p> Browser support information for typed arrays can be found <a href="http://caniuse.com/typedarrays" target="_blank">here</a>.</p>
+          </td>
+          </tr>
+	  </table>
+      	</fieldset>
       </form>
 
-     <p> Browser support information for typed arrays can be found <a href="http://caniuse.com/typedarrays" target="_blank">here</a>.</p>
-     <div id="audio"></div></div>
+
+<div id="audio"></div>
     <script src="/js/jquery-1.7.2.min.js"></script>
     <script src="/js/application.js"></script>
     <script src="javascripts/speakClient.js"></script>

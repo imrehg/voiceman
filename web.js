@@ -4,8 +4,9 @@ var express = require('express')
   , mongoose = require('mongoose')
   ;
 
-// var ObjectId = mongodb.ObjectId;
-
+var Schema = mongoose.Schema
+, ObjectId = Schema.ObjectId
+;
 
 var app = express.createServer(
     express.logger()
@@ -16,71 +17,39 @@ var app = express.createServer(
   , express.errorHandler()
 );
 
+var CounterSchema = new Schema({
+    _id : {type: String, unique: true},
+    c: {type: Number}
+});
 
-// // Ensure HTTPS: http://elias.kg/post/14971446990/force-ssl-with-express-js-on-heroku-nginx
-// app.use(function(req, res, next) {
-//     var schema = req.headers["x-forwarded-proto"];
+var MessageSchema = new Schema({
+    _id : {type: String, unique: true},
+    text: { type: String, required: true },
+    date: { type: Date, default: Date.now },
+    params: {}
+});
 
-//     if (!schema || schema === "https") {
-//         return next();
-//     }
-//     // --- Redirect to https
-//     res.redirect("https://" + req.headers.host + req.url);
-// });
+var EventSchema = new Schema({
+    event : ObjectId,
+    date : {type: Date, default: Date.now},
+    desc : String,
+    error: {}
+});
 
-// var usersById = {};
-// var usersByFbId = {};
-// var nextUserId = {};
+mongoose.connect('mongodb://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@'+process.env.MONGO_HOST+'/'+process.env.MONGO_DB);
+var EventModel = mongoose.model('Event', EventSchema);
+var CounterModel = mongoose.model('Counter', CounterSchema);
+var MessageModel = mongoose.model('Message', MessageSchema);
 
-// var ChangeSchema = new Schema({
-//     date: {type: Date, default: Date.now},
-//     gain: [String],
-//     loss: [String]
-// });
-
-// var AcquaintanceSchema = new Schema({
-//     person: ObjectId,
-//     userid: Number,
-//     name: String,
-//     connect: Date,
-//     disconnect: Date,
-//     disabled: {type: Boolean, default: false}
-// });
-
-// var PersonSchema = new Schema({
-//     person : ObjectId,
-//     facebook: {
-//         userid: String,
-// 	authtoken: {type: String},
-// 	authexpire: {type: Date},
-// 	friendlist: [Number],
-// 	lastcheck: {type: Date, default: Date.now},
-// 	changes: [ChangeSchema],
-// 	connections: [AcquaintanceSchema]
-//     },
-//     lastlogin: {type: Date, default: Date.now}
-// });
-
-// var EventSchema = new Schema({
-//     event : ObjectId,
-//     date : {type: Date, default: Date.now},
-//     desc : String,
-//     error: {}
-// });
-
-// mongoose.connect('mongodb://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@'+process.env.MONGO_URL+'/'+process.env.MONGO_DB);
-// var PersonModel = mongoose.model('Person', PersonSchema);
-// var EventModel = mongoose.model('Event', EventSchema);
-
-// // Add a new event to the logs
-// function addEvent(description, error) {
-//     var newEvent = new EventModel();
-//     newEvent.desc = description;
-//     if (error) {
-// 	newEvent.error = error;
-//     }
-//     newEvent.save();
-// };
+// Add a new event to the logs
+function addEvent(description, error) {
+    var newEvent = new EventModel();
+    newEvent.desc = description;
+    if (error) {
+	newEvent.error = error;
+    }
+    newEvent.save();
+};
 
 // everyauth.facebook
 //   .appId(process.env.FACEBOOK_APP_ID)
@@ -413,15 +382,64 @@ var app = express.createServer(
 //     }
 // });
 
+function addMessage(params, cb) {
+    CounterModel.findOne({_id : "msgcounter"}, function(err, doc) {
+	if (!err) {
+	    var id;
+	    if (doc) {
+		// This is most likely not safe
+		CounterModel.update({_id : "msgcounter"},
+				    { $inc: { c : 1 } },
+				    { multi: false}, 
+				    function (err, doc) { console.log(doc); }
+				    );
+		id = parseInt(doc.c).toString(36);
+	    } else {
+		var counter = new CounterModel();
+		counter._id = "msgcounter";
+		counter.c = 1;
+		counter.save(function (err) {
+		    if (!err) {
+			console.log('New counter created');
+		    } else {
+			console.log('Counter creation error: '+err);
+		    }
+		});
+		id = '0';
+	    }
+	    console.log('Message id: '+id);
+	    var newMessage = new MessageModel();
+	    newMessage._id = id;
+	    newMessage.text = params.text;
+	    newMessage.params = {a: params.amplitude, p: params.pitch, s: params.speed, w: params.wordgap};
+	    console.log(newMessage.params);
+	    newMessage.save();
+	    cb(null, id);
+	} else {
+	    addEvent('CounterLookupError', err);
+	    cb(err, null);
+	}
+    })
+};
+
+
 app.get('/send', function(req, res) {
     res.redirect('/');
 });
 
 app.post('/share', function(req, res) {
-    res.render('share.ejs', 
-	       {
-		   
-	       });
+    var params = req.body;
+    addMessage(params, function(err, id) {
+	if (!err) {
+	    res.render('share.ejs', 
+		       {
+			   title: "Send message",
+			   id: id
+		       });
+	} else {
+	    res.send("Error occured..."+err);
+	}
+    });
 });
 
 app.get('/:id', function(req, res) {
